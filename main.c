@@ -144,13 +144,8 @@ void tokenize(char* expr, token_expression* out) {
 //syntax check
 int checkTokenValidity(token_expression* expr, char* outError) {
 	//first, check known invalid token sequences
-	token_category_t invalidSequences[8][2] = {
+	token_category_t invalidSequences[3][2] = {
 		{TOKEN_CATEGORY_NUMBER, TOKEN_CATEGORY_NUMBER},
-		{TOKEN_CATEGORY_PAREN, TOKEN_CATEGORY_NUMBER},
-		{TOKEN_CATEGORY_NUMBER, TOKEN_CATEGORY_PAREN},
-		{TOKEN_CATEGORY_PAREN, TOKEN_CATEGORY_OP},
-		{TOKEN_CATEGORY_PAREN, TOKEN_CATEGORY_PAREN},
-		{TOKEN_CATEGORY_OP, TOKEN_CATEGORY_PAREN},
 		{TOKEN_CATEGORY_OP, TOKEN_CATEGORY_OP},
 		{TOKEN_CATEGORY_OP, TOKEN_CATEGORY_END}
 	};
@@ -165,16 +160,16 @@ int checkTokenValidity(token_expression* expr, char* outError) {
 		}
 	}
 	//next, check for matching parens
+	int parenDepth = 0;
 	for (int tokenPointer = 0; expr[tokenPointer].type != TOKEN_END; tokenPointer++) {
-		int parenDepth = 0;
 		if (expr[tokenPointer].type == TOKEN_OPEN_PAREN)
 			parenDepth++;
 		if (expr[tokenPointer].type == TOKEN_CLOSE_PAREN)
 			parenDepth--;
-		if (parenDepth != 0) {
-			sprintf(outError, "Unmatched parens: ended expression with depth %i\n", parenDepth);
-			return 1;
-		}
+	}
+	if (parenDepth != 0) {
+		sprintf(outError, "Unmatched parens: ended expression with depth %i\n", parenDepth);
+		return 1;
 	}
 	return 0;
 }
@@ -193,5 +188,6 @@ int main(int argc, char const *argv[]) {
 	char tokenExpressionError[1024];
 	if (checkTokenValidity(exprTokens, tokenExpressionError))
 		DIE(tokenExpressionError);
+
 	return 0;
 }
