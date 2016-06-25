@@ -193,6 +193,5 @@ int main(int argc, char const *argv[]) {
 	char tokenExpressionError[1024];
 	if (checkTokenValidity(exprTokens, tokenExpressionError))
 		DIE(tokenExpressionError);
-
 	return 0;
 }
